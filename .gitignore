@@ -1,3 +1,8 @@
 venv/
 UIIP_Histo_DATA/
 .idea/
+.ipynb_checkpoints/
+__pycache__/
+mini2/
+.vscode/
+mini/
