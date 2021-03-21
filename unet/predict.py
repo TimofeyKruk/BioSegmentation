@@ -104,7 +104,7 @@ def mask_to_image(mask):
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
-    model_path = "checkpoints2/CP_epoch20.pth"
+    model_path = "checkpoints3/CP_epoch15.pth"
 
     net = UNet(n_channels=3, n_classes=1)
 
@@ -145,9 +145,9 @@ if __name__ == "__main__":
             threshold=0.5
             prob[prob<threshold*255]=0
 
-            cv2.imwrite("rubbish2/{}_predicted.png".format(i),prob)
-            cv2.imwrite("rubbish2/{}_image.png".format(i), (imgs.cpu() * 255)[0].numpy().transpose((1, 2, 0)))
-            cv2.imwrite("rubbish2/{}_mask_original.png".format(i),
+            cv2.imwrite("rubbish3/{}_predicted.png".format(i),prob)
+            cv2.imwrite("rubbish3/{}_image.png".format(i), (imgs.cpu() * 255)[0].numpy().transpose((1, 2, 0)))
+            cv2.imwrite("rubbish3/{}_mask_original.png".format(i),
                         (true_masks.cpu() * 255)[0].numpy().transpose((1, 2, 0)))
             # plt.imshow(prob)
             # plt.show()
