@@ -57,6 +57,8 @@ class CancerDataset(Dataset):
 
 
 if __name__ == '__main__':
+
+    # TODO: THIS CODE IS TO CROP LARGE-SCALE SLIDES TO TILES!!!!!!!!!!!!!!!!!!!!! (Saving with all the rubbish)
     slides_path = "/media/krukts/HDD/BioDiploma/UIIP_Histo_DATA/CAM17/wsi"
     annotations_path = "/media/krukts/HDD/BioDiploma/UIIP_Histo_DATA/CAM17/lesion_annotations"
     # file = "patient_004_node_4.xml"

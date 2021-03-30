@@ -120,16 +120,13 @@ if __name__ == "__main__":
     dataset = CancerDataset()
     print("DATASET LOADED!!!")
 
-    val_percent = 0.1
+    val_percent = 0
     batch_size = 1
-    n_val = int(len(dataset) * val_percent)
-    n_train = len(dataset) - n_val
-    train, val = random_split(dataset, [n_train, n_val])
-    train_loader = DataLoader(train, batch_size=batch_size, shuffle=True, num_workers=4, pin_memory=True)
-    val_loader = DataLoader(val, batch_size=batch_size, shuffle=False, num_workers=4, pin_memory=True, drop_last=True)
+
+    train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=4, pin_memory=True)
     i = 0
     with torch.no_grad():
-        for imgs, true_masks in val_loader:
+        for imgs, true_masks in train_loader:
             imgs = imgs.to(device=device, dtype=torch.float32)
             mask_type = torch.float32 if net.n_classes == 1 else torch.long
             true_masks = true_masks.to(device=device, dtype=mask_type)
@@ -139,13 +136,14 @@ if __name__ == "__main__":
 
             print(probabilities.shape)
             print("I: ", i)
-            prob=(probabilities.cpu() * 255)[0].numpy().transpose((1, 2, 0))
+            prob = (probabilities.cpu() * 255)[0].numpy().transpose((1, 2, 0))
             print(prob.shape)
 
-            threshold=0.5
-            prob[prob<threshold*255]=0
+            threshold = 0.5
+            prob[prob < threshold * 255] = 0
 
-            cv2.imwrite("rubbish3/{}_predicted.png".format(i),prob)
+            cv2.imwrite("rubbish3/{}_predicted.png".format(i),
+                        cv2.applyColorMap(prob.astype(np.uint8), cv2.COLORMAP_JET))
             cv2.imwrite("rubbish3/{}_image.png".format(i), (imgs.cpu() * 255)[0].numpy().transpose((1, 2, 0)))
             cv2.imwrite("rubbish3/{}_mask_original.png".format(i),
                         (true_masks.cpu() * 255)[0].numpy().transpose((1, 2, 0)))
@@ -153,3 +151,5 @@ if __name__ == "__main__":
             # plt.show()
             # plt.close()
             i += 1
+            if i >= 80:
+                break
