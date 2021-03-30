@@ -19,7 +19,7 @@ from torch.utils.data import DataLoader, random_split
 
 dir_img = 'data/imgs/'
 dir_mask = 'data/masks/'
-dir_checkpoint = 'checkpoints3/'
+dir_checkpoint = 'checkpoints4/'
 
 
 def train_net(net,
