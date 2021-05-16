@@ -41,7 +41,6 @@ from nnunet.utilities.tensor_utilities import sum_tensor
 from torch import nn
 from torch.optim import lr_scheduler
 
-
 matplotlib.use("agg")
 
 
@@ -487,7 +486,8 @@ class nnUNetTrainer(NetworkTrainer):
                                                          use_sliding_window: bool = True, step_size: float = 0.5,
                                                          use_gaussian: bool = True, pad_border_mode: str = 'constant',
                                                          pad_kwargs: dict = None, all_in_gpu: bool = False,
-                                                         verbose: bool = True, mixed_precision: bool = True) -> Tuple[np.ndarray, np.ndarray]:
+                                                         verbose: bool = True, mixed_precision: bool = True) -> Tuple[
+        np.ndarray, np.ndarray]:
         """
         :param data:
         :param do_mirroring:
@@ -516,6 +516,7 @@ class nnUNetTrainer(NetworkTrainer):
 
         current_mode = self.network.training
         self.network.eval()
+        print("!!!!519 before predict3d()")
         ret = self.network.predict_3D(data, do_mirroring=do_mirroring, mirror_axes=mirror_axes,
                                       use_sliding_window=use_sliding_window, step_size=step_size,
                                       patch_size=self.patch_size, regions_class_order=self.regions_class_order,
@@ -523,13 +524,14 @@ class nnUNetTrainer(NetworkTrainer):
                                       pad_kwargs=pad_kwargs, all_in_gpu=all_in_gpu, verbose=verbose,
                                       mixed_precision=mixed_precision)
         self.network.train(current_mode)
+        print("what predict_.... will return. ret: ", ret)
         return ret
 
     def validate(self, do_mirroring: bool = True, use_sliding_window: bool = True, step_size: float = 0.5,
                  save_softmax: bool = True, use_gaussian: bool = True, overwrite: bool = True,
                  validation_folder_name: str = 'validation_raw', debug: bool = False, all_in_gpu: bool = False,
                  segmentation_export_kwargs: dict = None, run_postprocessing_on_folds: bool = True):
-        """
+        """nnUNet_train 3d_fullres nnUNetTrainerV2 4 0
         if debug=True then the temporary files generated for postprocessing determination will be kept
         """
 
@@ -585,6 +587,7 @@ class nnUNetTrainer(NetworkTrainer):
         results = []
 
         for k in self.dataset_val.keys():
+
             properties = load_pickle(self.dataset[k]['properties_file'])
             fname = properties['list_of_data_files'][0].split("/")[-1][:-12]
             if overwrite or (not isfile(join(output_folder, fname + ".nii.gz"))) or \
@@ -593,7 +596,8 @@ class nnUNetTrainer(NetworkTrainer):
 
                 print(k, data.shape)
                 data[-1][data[-1] == -1] = 0
-
+                print(data[-1])
+                print(data[:-1])
                 softmax_pred = self.predict_preprocessed_data_return_seg_and_softmax(data[:-1],
                                                                                      do_mirroring=do_mirroring,
                                                                                      mirror_axes=mirror_axes,
@@ -602,7 +606,7 @@ class nnUNetTrainer(NetworkTrainer):
                                                                                      use_gaussian=use_gaussian,
                                                                                      all_in_gpu=all_in_gpu,
                                                                                      mixed_precision=self.fp16)[1]
-
+                print("softmax_pred in nnTrainer.py 609: ",softmax_pred)
                 softmax_pred = softmax_pred.transpose([0] + [i + 1 for i in self.transpose_backward])
 
                 if save_softmax:
@@ -716,6 +720,8 @@ class nnUNetTrainer(NetworkTrainer):
                                if not np.isnan(i)]
         self.all_val_eval_metrics.append(np.mean(global_dc_per_class))
 
+        print(self.max_num_epochs)
+        self.print_to_log_file("NUM: ", str(self.max_num_epochs))
         self.print_to_log_file("Average global foreground Dice:", str(global_dc_per_class))
         self.print_to_log_file("(interpret this as an estimate for the Dice of the different classes. This is not "
                                "exact.)")

@@ -1,6 +1,4 @@
-""" Full assembly of the parts to form the complete network """
-
-import torch.nn.functional as F
+import torch
 
 from .unet_parts import *
 
@@ -25,7 +23,9 @@ class UNet(nn.Module):
         # self.up4 = Up(128, 64, bilinear)
         # self.outc = OutConv(64, n_classes)
 
-        n0 = 32
+        self.predict_pool = nn.AvgPool2d(32)
+
+        n0 = 64
         n1 = n0 * 2
         n2 = n0 * 4
         n3 = n0 * 8
@@ -59,8 +59,31 @@ class UNet(nn.Module):
 
         self.outc = OutConv(n0, n_classes)
 
+    def predict(self, x):
+        # with torch.no_grad():
+        #     x1 = self.inc(x)
+        #     x2 = self.down1(x1)
+        #     x3 = self.down2(x2)
+        #     x4 = self.down3(x3)
+        #     x5 = self.down4(x4)
+        #
+        # averaged = self.predict_pool(x5)
+
+        # UNet++
+        with torch.no_grad():
+            # down
+            x0_0 = self.inc0_0(x)
+            x1_0 = self.down1_0(x0_0)
+            x2_0 = self.down2_0(x1_0)
+            x3_0 = self.down3_0(x2_0)
+            x4_0 = self.down4_0(x3_0)
+
+        averaged = self.predict_pool(x4_0)
+
+        return averaged[:, :, 0, 0]
+
     def forward(self, x):
-        # #old
+        # # old
         # x1 = self.inc(x)
         # x2 = self.down1(x1)
         # x3 = self.down2(x2)

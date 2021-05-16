@@ -42,7 +42,8 @@ class nnUNetTrainerV2_2epochs(nnUNetTrainerV2):
                                                          use_sliding_window: bool = True, step_size: float = 0.5,
                                                          use_gaussian: bool = True, pad_border_mode: str = 'constant',
                                                          pad_kwargs: dict = None, all_in_gpu: bool = False,
-                                                         verbose: bool = True, mixed_precision=True) -> Tuple[np.ndarray, np.ndarray]:
+                                                         verbose: bool = True, mixed_precision=True) -> Tuple[
+        np.ndarray, np.ndarray]:
         pass
 
     def save_checkpoint(self, fname, save_optimizer=True):
@@ -54,24 +55,35 @@ class nnUNetTrainerV2_5epochs(nnUNetTrainerV2):
                  unpack_data=True, deterministic=True, fp16=False):
         super().__init__(plans_file, fold, output_folder, dataset_directory, batch_dice, stage, unpack_data,
                          deterministic, fp16)
-        self.max_num_epochs = 5
+        print("INITIALIZED FOORR 1!!!!!!!!!!!!!!!!!")
+        self.max_num_epochs = 1
 
     def validate(self, do_mirroring: bool = True, use_sliding_window: bool = True, step_size: float = 0.5,
                  save_softmax: bool = True, use_gaussian: bool = True, overwrite: bool = True,
                  validation_folder_name: str = 'validation_raw', debug: bool = False, all_in_gpu: bool = False,
                  segmentation_export_kwargs=None, run_postprocessing_on_folds: bool = True):
-        pass
+        super().validate(do_mirroring, use_sliding_window, step_size,
+                         save_softmax, use_gaussian, overwrite,
+                         validation_folder_name, debug, all_in_gpu,
+                         segmentation_export_kwargs, run_postprocessing_on_folds)
 
     def predict_preprocessed_data_return_seg_and_softmax(self, data: np.ndarray, do_mirroring: bool = True,
                                                          mirror_axes: Tuple[int] = None,
                                                          use_sliding_window: bool = True, step_size: float = 0.5,
                                                          use_gaussian: bool = True, pad_border_mode: str = 'constant',
                                                          pad_kwargs: dict = None, all_in_gpu: bool = False,
-                                                         verbose: bool = True, mixed_precision=True) -> Tuple[np.ndarray, np.ndarray]:
-        pass
+                                                         verbose: bool = True, mixed_precision=True) -> Tuple[
+        np.ndarray, np.ndarray]:
+        super().predict_preprocessed_data_return_seg_and_softmax(data, do_mirroring,
+                                                                 mirror_axes,
+                                                                 use_sliding_window, step_size,
+                                                                 use_gaussian, pad_border_mode,
+                                                                 pad_kwargs, all_in_gpu,
+                                                                 verbose, mixed_precision)
 
     def save_checkpoint(self, fname, save_optimizer=True):
-        pass
+        print("Entered checkpoint")
+        super().save_checkpoint(fname,save_optimizer)
 
 
 class nnUNetTrainerV2_5epochs_CEnoDS(nnUNetTrainerV2_noDeepSupervision):
@@ -93,7 +105,8 @@ class nnUNetTrainerV2_5epochs_CEnoDS(nnUNetTrainerV2_noDeepSupervision):
                                                          use_sliding_window: bool = True, step_size: float = 0.5,
                                                          use_gaussian: bool = True, pad_border_mode: str = 'constant',
                                                          pad_kwargs: dict = None, all_in_gpu: bool = False,
-                                                         verbose: bool = True, mixed_precision=True) -> Tuple[np.ndarray, np.ndarray]:
+                                                         verbose: bool = True, mixed_precision=True) -> Tuple[
+        np.ndarray, np.ndarray]:
         pass
 
     def save_checkpoint(self, fname, save_optimizer=True):
@@ -167,7 +180,8 @@ class nnUNetTrainerV2_5epochs_noDS(nnUNetTrainerV2_noDeepSupervision):
                                                          use_sliding_window: bool = True, step_size: float = 0.5,
                                                          use_gaussian: bool = True, pad_border_mode: str = 'constant',
                                                          pad_kwargs: dict = None, all_in_gpu: bool = False,
-                                                         verbose: bool = True, mixed_precision=True) -> Tuple[np.ndarray, np.ndarray]:
+                                                         verbose: bool = True, mixed_precision=True) -> Tuple[
+        np.ndarray, np.ndarray]:
         pass
 
     def save_checkpoint(self, fname, save_optimizer=True):
@@ -242,7 +256,8 @@ class nnUNetTrainerV2_DDP_5epochs(nnUNetTrainerV2_DDP):
                                                          use_sliding_window: bool = True, step_size: float = 0.5,
                                                          use_gaussian: bool = True, pad_border_mode: str = 'constant',
                                                          pad_kwargs: dict = None, all_in_gpu: bool = False,
-                                                         verbose: bool = True, mixed_precision=True) -> Tuple[np.ndarray, np.ndarray]:
+                                                         verbose: bool = True, mixed_precision=True) -> Tuple[
+        np.ndarray, np.ndarray]:
         pass
 
     def save_checkpoint(self, fname, save_optimizer=True):
@@ -254,7 +269,8 @@ class nnUNetTrainerV2_DDP_5epochs_dummyLoad(nnUNetTrainerV2_DDP_5epochs):
         super().initialize(training, force_load_plans)
         self.some_batch = torch.rand((self.batch_size, self.num_input_channels, *self.patch_size)).float().cuda()
 
-        self.some_gt = [torch.round(torch.rand((self.batch_size, 1, *[int(i * j) for i, j in zip(self.patch_size, k)])) * (
+        self.some_gt = [
+            torch.round(torch.rand((self.batch_size, 1, *[int(i * j) for i, j in zip(self.patch_size, k)])) * (
                     self.num_classes - 1)).float().cuda() for k in self.deep_supervision_scales]
 
     def run_iteration(self, data_generator, do_backprop=True, run_online_evaluation=False):

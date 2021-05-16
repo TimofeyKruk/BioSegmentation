@@ -49,6 +49,7 @@ class CancerDataset(Dataset):
         image = image.transpose((2, 0, 1))
         mask = mask.transpose((2, 0, 1))
 
+        # TODO: Add normalization!!!!
         # Normalizing
         if image.max() > 1:
             image = image / 255

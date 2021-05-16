@@ -1,0 +1,9 @@
+torchvision==0.6.1
+~aiss_gpu==1.6.4.post2
+pandas==1.0.3
+albumentations==0.4.6
+numpy==1.18.1
+tqdm==4.43.0
+torch==1.5.1
+faiss==1.5.3
+scikit_learn==0.24.1

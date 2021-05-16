@@ -54,7 +54,7 @@ def main():
                         help="If specified, this will overwrite the task id in the output folder. If unspecified, the "
                              "task id of the input folder will be used.")
     args = parser.parse_args()
-
+    print("I am here")
     crawl_and_remove_hidden_from_decathlon(args.i)
 
     split_4d(args.i, args.p, args.output_task_id)

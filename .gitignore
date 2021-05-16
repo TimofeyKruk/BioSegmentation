@@ -10,3 +10,9 @@ dataset*/
 checkpoints*/
 rubbish*/
 runs/
+adapted_dataset/
+Timofey/
+EfficientNet-PyTorch/
+log/
+nnUNet/
+

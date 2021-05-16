@@ -26,11 +26,13 @@ def main():
     argparser.add_argument("-m", type=str, required=True, help="U-Net model (2d, 3d_lowres, 3d_fullres or "
                                                                "3d_cascade_fullres)")
     argparser.add_argument("-t", type=str, required=True, help="Task name or id")
-    argparser.add_argument("-tr", type=str, required=False, default=None,
+
+    argparser.add_argument("-tr", type=str, required=False, default="nnUNetTrainerV2",
                            help="nnUNetTrainer class. Default: %s, unless 3d_cascade_fullres "
                                 "(then it's %s)" % (default_trainer, default_cascade_trainer))
     argparser.add_argument("-pl", type=str, required=False, default=default_plans_identifier,
                            help="Plans name, Default=%s" % default_plans_identifier)
+
     argparser.add_argument("-val", type=str, required=False, default="validation_raw",
                            help="Validation folder name. Default: validation_raw")
 
@@ -52,8 +54,9 @@ def main():
             trainer = "nnUNetTrainerV2"
 
     folder = get_output_folder_name(model, task, trainer, plans, None)
-
-    consolidate_folds(folder, val)
+    print(folder)
+    print(val)
+    consolidate_folds(folder, val, folds=tuple([0]))
 
 
 if __name__ == "__main__":

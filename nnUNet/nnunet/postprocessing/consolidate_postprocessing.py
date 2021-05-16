@@ -23,8 +23,9 @@ import argparse
 
 
 def collect_cv_niftis(cv_folder: str, output_folder: str, validation_folder_name: str = 'validation_raw',
-                      folds: tuple = (0, 1, 2, 3, 4)):
+                      folds: tuple = (0)):
     validation_raw_folders = [join(cv_folder, "fold_%d" % i, validation_folder_name) for i in folds]
+    print(validation_raw_folders)
     exist = [isdir(i) for i in validation_raw_folders]
 
     if not all(exist):
@@ -87,11 +88,12 @@ def consolidate_folds(output_folder_base, validation_folder_name: str = 'validat
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("-f", type=str, required=True, help="experiment output folder (fold_0, fold_1, "
-                                                               "etc must be subfolders of the given folder)")
+    argparser.add_argument("-f", type=str, required=False, help="experiment output folder (fold_0, fold_1, "
+                                                               "etc must be subfolders of the given folder)",
+                           default="/media/krukts/HDD/BioDiploma/nnUNet/nnUNet_trained_models/nnUNet/2d/Task113_Custom2D/nnUNetTrainerV2__nnUNetPlansv2.1")
 
     args = argparser.parse_args()
 
     folder = args.f
-
+    print("FOLDER: ", folder)
     consolidate_folds(folder)
