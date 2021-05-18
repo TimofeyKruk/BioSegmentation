@@ -15,4 +15,5 @@ Timofey/
 EfficientNet-PyTorch/
 log/
 nnUNet/
-
+*.png
+BalancedFEData/

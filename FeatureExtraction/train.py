@@ -14,17 +14,17 @@ from FeatureExtraction.model import FEModel
 torch.autograd.set_detect_anomaly(True)
 
 # TODO: MAKE IT CONFIG!
-dataset_path = "/media/krukts/HDD/BioDiploma/Timofey/dataset_PINK_300k_Stage2_WithErrorNormCls"
+# dataset_path = "/media/krukts/HDD/BioDiploma/Timofey/dataset_PINK_300k_Stage2_WithErrorNormCls"
+dataset_path = "/media/krukts/HDD/BioDiploma/BalancedFEData/HISTO_Image_Dataset_CAMELYON16_3_Classes_18K_Tiles"
 model_name = "efficientnet-b0"
-save_name = "SecondTry"
+save_name = "Balanced"
 
 tb_name = "log/tb/" + save_name
 
-validation_split = 0.2
 batch_size = 40
 lr_start = 1e-4
-epochs = 15
-log_every = 25
+epochs = 25
+log_every = 15
 save_model = True
 img_size = (224, 224)
 
@@ -32,30 +32,17 @@ if __name__ == '__main__':
     print("Script started to work!")
 
     # Dataset creation
-    dataset = CAM17Dataset(dataset_path=dataset_path, img_size=img_size)
+    train_dataset = CAM17Dataset(type="train", dataset_path=dataset_path, img_size=img_size)
+    validation_dataset = CAM17Dataset(type="test", dataset_path=dataset_path, img_size=img_size)
 
-    # Creating data indices for training and validation splits:
-    dataset_size = len(dataset)
-    indices = list(range(dataset_size))
-    split = int(np.floor(validation_split * dataset_size))
-    np.random.shuffle(indices)
-
-    train_indices, validation_indices = indices[split:], indices[:split]
-
-    # Creating samplers
-    train_sampler = SubsetRandomSampler(train_indices)
-    validation_sampler = SubsetRandomSampler(validation_indices)
-
-    train_dataloader = DataLoader(dataset,
+    train_dataloader = DataLoader(train_dataset,
                                   batch_size=batch_size,
-                                  num_workers=2,
-                                  sampler=train_sampler,
-                                  drop_last=True)
-    validation_dataloader = DataLoader(dataset,
+                                  shuffle=True,
+                                  num_workers=2)
+    validation_dataloader = DataLoader(validation_dataset,
                                        batch_size=batch_size,
-                                       num_workers=2,
-                                       sampler=validation_sampler,
-                                       drop_last=True)
+                                       shuffle=True,
+                                       num_workers=2)
 
     print("Train dataloader len: ", len(train_dataloader))
     print("Validation dataloader len: ", len(validation_dataloader))
@@ -78,16 +65,12 @@ if __name__ == '__main__':
     criterion = torch.nn.CrossEntropyLoss()
     criterion.to(device)
     # --------------------------------------------
-    # TODO: try bigger momentum (0.9 for instance)
-    # TODO: Maybe try another optimizer
     optimizer = torch.optim.SGD(model.parameters(), lr=lr_start, weight_decay=1e-5)
     # optimizer = torch.optim.Adam(model.parameters(), lr=lr_start)
 
-    # TODO: As Ksenia recommended, maybe I should tri cyclic schedulers
     # scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[10, 20, 35, 50, 70], gamma=0.7)
     # Cyclic scheduler
     scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, base_lr=1e-5, max_lr=lr_start, step_size_up=2000)
-    # # TODO: Registering hooks to crop the gradients
     # clip_value = 1.0
     # for p in model.parameters():
     #     p.register_hook(lambda

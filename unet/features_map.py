@@ -61,8 +61,8 @@ if __name__ == "__main__":
     writer = SummaryWriter("/media/krukts/HDD/BioDiploma/unet/rubbish5simple/tensorboard/" + tb_name)
 
     i = 0
-    m = 25
-    s = 320
+    m = 36
+    s = 224
     alpha = 0.4
 
     all_features = torch.zeros((m, 1024))
@@ -119,14 +119,16 @@ if __name__ == "__main__":
 
     # dist_prob = calc_all_dist_prob(all_features, template_features)
     dist_prob = calc_all_dist_prob(torch.tensor(pca_features), torch.tensor(pca_features[0]))
+    sorted_dist = np.argsort(dist_prob)
+    print("Sorted dist: ", sorted_dist)
 
     thr = 0.6
     for i in range(sq):
         for j in range(sq):
-            current_image = all_images[i * sq + j].numpy().transpose((1, 2, 0)) * 255
-            current_predicted = all_predicted[i * sq + j]
+            current_image = all_images[sorted_dist[i * sq + j]].numpy().transpose((1, 2, 0)) * 255
+            current_predicted = all_predicted[sorted_dist[i * sq + j]]
 
-            total_masked_image[i * s:i * s + s, j * s:j * s + s] = np.uint8((1 - alpha) * current_image)
+            total_masked_image[ j * s:j * s + s,i * s:i * s + s] = np.uint8((1 - alpha) * current_image)
 
             # current_heatmap = np.full((s, s, 3), 255.)
             # current_heatmap *= dist_prob[i * sq + j] / np.max(dist_prob)
@@ -138,12 +140,12 @@ if __name__ == "__main__":
             current_heatmap = cv2.applyColorMap(np.uint8(current_predicted), cv2.COLORMAP_HOT)
             current_heatmap[:, :, 2] = 0
 
-            total_masked_image[i * s:i * s + s, j * s:j * s + s] += np.uint8(alpha * current_heatmap)
+            total_masked_image[ j * s:j * s + s,i * s:i * s + s,] += np.uint8(alpha * current_heatmap)
 
     for i in range(sq):
         for j in range(sq):
-            total_masked_image = cv2.putText(total_masked_image, "{:.2f}".format(dist_prob[i * sq + j]),
-                                             (i * s + 30, j * s + 50),
+            total_masked_image = cv2.putText(total_masked_image, "{:.2f}".format(dist_prob[sorted_dist[i * sq + j]]),
+                                             (j * s + 30, i * s + 50),
                                              fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                                              fontScale=1.5,
                                              color=(25, 5, 10),
@@ -153,5 +155,5 @@ if __name__ == "__main__":
     plt.imshow(total_masked_image / 255)
     plt.show()
 
-    cv2.imwrite("out_pca3.png", total_masked_image)
+    cv2.imwrite("out_pca8new.png", total_masked_image)
     print("Script worked!")
