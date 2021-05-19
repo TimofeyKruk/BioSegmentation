@@ -15,7 +15,7 @@ import histomicstk.preprocessing.color_normalization as hist
 shuffle_dataset = True
 save_path = "/media/krukts/HDD/BioDiploma/FeatureExtraction/log"
 # TODO: Check this!!!!!!!!!!!!!
-save_name = "Balanced"
+save_name = "BalancedNormalized"
 
 dataset_path = "/media/krukts/HDD/BioDiploma/BalancedFEData/HISTO_Image_Dataset_CAMELYON16_3_Classes_18K_Tiles"
 img_size = (224, 224)
@@ -96,7 +96,14 @@ if __name__ == '__main__':
     thr = 0.6
     for i in range(sq):
         for j in range(sq):
-            current_image = all_images[sorted_dist[i * sq + j]].numpy().transpose((1, 2, 0)) * 255
+            current_image = cv2.cvtColor(all_images[sorted_dist[i * sq + j]].numpy().transpose((1, 2, 0)) * 255,
+                                         cv2.COLOR_RGB2BGR)
+            # converted=cv2.cvtColor(current_image,cv2.COLOR_BGR2RGB)
+            # result=hist.deconvolution_based_normalization(converted)
+            # plt.imshow(converted)
+            # plt.show()
+            # plt.close()
+            # back=cv2.cvtColor(result,cv2.COLOR_RGB2BGR)
             total_image[i * s:i * s + s, j * s:j * s + s] = np.uint8(current_image)
 
     for i in range(sq):
@@ -119,5 +126,5 @@ if __name__ == '__main__':
     plt.imshow(total_image / 255)
     plt.show()
 
-    cv2.imwrite("balanced_pca16_L1_3.png", total_image)
+    cv2.imwrite("balanced_normalized_pca16_L1_5final.png", total_image)
     print("Script worked!")

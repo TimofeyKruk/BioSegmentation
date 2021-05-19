@@ -37,4 +37,5 @@ if __name__ == '__main__':
     plt.imshow(result_blue)
     plt.show()
     plt.close()
-    # cv2.imwrite("l.png",pink)
+    # cv2.imwrite("pink.png",pink)
+    # cv2.imwrite("resultpink.png",result_pink)

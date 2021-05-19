@@ -17,13 +17,14 @@ torch.autograd.set_detect_anomaly(True)
 # dataset_path = "/media/krukts/HDD/BioDiploma/Timofey/dataset_PINK_300k_Stage2_WithErrorNormCls"
 dataset_path = "/media/krukts/HDD/BioDiploma/BalancedFEData/HISTO_Image_Dataset_CAMELYON16_3_Classes_18K_Tiles"
 model_name = "efficientnet-b0"
-save_name = "Balanced"
+
+save_name = "BalancedNormalized"
 
 tb_name = "log/tb/" + save_name
 
 batch_size = 40
 lr_start = 1e-4
-epochs = 25
+epochs = 40
 log_every = 15
 save_model = True
 img_size = (224, 224)

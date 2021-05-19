@@ -9,10 +9,13 @@ class CAM17Dataset(Dataset):
     def __init__(self,
                  type="train",
                  dataset_path="/media/krukts/HDD/BioDiploma/BalancedFEData/HISTO_Image_Dataset_CAMELYON16_3_Classes_18K_Tiles",
-                 img_size=(224, 224)):
+                 img_size=(224, 224),
+                 extended=False,
+                 includeEPI=False):
         self.dataset_path = dataset_path
         self.img_size = img_size
         self.type = type
+        self.extended = extended
 
         self.all_names = []
         self.all_labels = []
@@ -25,11 +28,11 @@ class CAM17Dataset(Dataset):
         nrm_subfolder = None
         tum_subfolder = None
         if self.type == "train":
-            nrm_subfolder = "Class_1a_NRM_Train"
-            tum_subfolder = "Class_2a_TUM_Train"
+            nrm_subfolder = "Class_1a_NRM_Train_NORMALIZED"
+            tum_subfolder = "Class_2a_TUM_Train_NORMALIZED"
         if self.type == "test":
-            nrm_subfolder = "Class_1b_NRM_Test"
-            tum_subfolder = "Class_2b_TUM_Test"
+            nrm_subfolder = "Class_1b_NRM_Test_NORMALIZED"
+            tum_subfolder = "Class_2b_TUM_Test_NORMALIZED"
 
         self.nrm_subfolder = nrm_subfolder
         self.tum_subfolder = tum_subfolder
@@ -65,12 +68,16 @@ class CAM17Dataset(Dataset):
         label = self.all_labels[index]
 
         image = cv2.imread(os.path.join(self.dataset_path, self.all_names[index]))
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         # TODO: IMPORTANT!!! Resizing
         image = cv2.resize(image, self.img_size)
         image = self.transform(image)
 
-        return image, torch.tensor(label)
+        if not self.extended:
+            return image, torch.tensor(label)
+        else:
+            return image, torch.tensor(label), self.all_wsi_indexes[index], self.all_names[index]
 
 # # OLD
 # class CAM17Dataset(Dataset):

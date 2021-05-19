@@ -10,14 +10,14 @@ from torch.utils.data import DataLoader
 from torchsummary import summary
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans, DBSCAN
-
+from sklearn import svm
 shuffle_dataset = True
 save_path = "/media/krukts/HDD/BioDiploma/FeatureExtraction/log"
-save_name = "Balanced"
+save_name = "BalancedNormalized"
 
 dataset_path = "/media/krukts/HDD/BioDiploma/BalancedFEData/HISTO_Image_Dataset_CAMELYON16_3_Classes_18K_Tiles"
 img_size = (224, 224)
-tb_name = "BalancedPOST"  # TODO: Parameterize
+tb_name = "BalancedNormalizedPOST_KMeans"  # TODO: Parameterize
 
 if __name__ == '__main__':
     model = FEModel()
@@ -75,8 +75,8 @@ if __name__ == '__main__':
     clusters, centers = k_means.labels_, k_means.cluster_centers_
 
     writer.add_embedding(all_features,
-                         # metadata=torch.tensor(clusters),
-                         metadata=all_labels,
+                         metadata=torch.tensor(clusters),
+                         # metadata=all_labels,
                          label_img=all_images)
     writer.close()
     print("Script worked!")
